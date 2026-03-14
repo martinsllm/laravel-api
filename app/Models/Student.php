@@ -12,4 +12,14 @@ class Student extends Model
         'name',
         'email',
     ];
+
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class);
+    }
 }
