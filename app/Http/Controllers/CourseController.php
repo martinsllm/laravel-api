@@ -3,16 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CourseRequest;
-use App\Models\Course;
+use App\Services\CourseService;
 
 class CourseController extends Controller
 {
+    public function __construct(public CourseService $courseService)
+    {
+        
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $courses = Course::all();
+        $courses = $this->courseService->list();
         return response()->json($courses, 200);
     }
 
@@ -21,7 +25,7 @@ class CourseController extends Controller
      */
     public function store(CourseRequest $request)
     {
-        $course = Course::create($request->all());
+        $course = $this->courseService->create($request->all());
         return response()->json($course, 200);
     }
 
@@ -30,7 +34,7 @@ class CourseController extends Controller
      */
     public function show(string $id)
     {
-        $course = Course::find($id);
+        $course = $this->courseService->find($id);
 
         if (!$course) {
             return response()->json(['message' => 'Course not found'], 404);
@@ -44,13 +48,13 @@ class CourseController extends Controller
      */
     public function update(CourseRequest $request, string $id)
     {
-        $course = Course::find($id);
+        $course = $this->courseService->find($id);
 
         if (!$course) {
             return response()->json(['message' => 'Course not found'], 404);
         }
 
-        $course->update($request->all());
+        $this->courseService->update($course, $request->all());
 
         return response()->json($course, 200);
     }
@@ -60,13 +64,13 @@ class CourseController extends Controller
      */
     public function destroy(string $id)
     {
-        $course = Course::find($id);
+        $course = $this->courseService->find($id);
 
         if (!$course) {
             return response()->json(['message' => 'Course not found'], 404);
         }
 
-        $course->delete();
+        $this->courseService->delete($course);
 
         return response()->json(['message' => 'Course deleted successfully'], 200);
     }

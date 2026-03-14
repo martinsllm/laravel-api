@@ -3,16 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StudentRequest;
-use App\Models\Student;
+use App\Services\StudentService;
 
 class StudentController extends Controller
 {
+    public function __construct(public StudentService $studentService)
+    {
+        
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $students = Student::all();
+        $students = $this->studentService->list();
         return response()->json($students, 200);
     }
 
@@ -21,7 +26,7 @@ class StudentController extends Controller
      */
     public function store(StudentRequest $request)
     {
-        $student = Student::create($request->all());
+        $student = $this->studentService->create($request->all());
         return response()->json($student, 200);
     }
 
@@ -30,7 +35,7 @@ class StudentController extends Controller
      */
     public function show(string $id)
     {
-        $student = Student::find($id);
+        $student = $this->studentService->find($id);
 
         if (!$student) {
             return response()->json(['message' => 'Student not found'], 404);
@@ -44,13 +49,13 @@ class StudentController extends Controller
      */
     public function update(StudentRequest $request, string $id)
     {
-        $student = Student::find($id);
+        $student = $this->studentService->find($id);
 
         if (!$student) {
             return response()->json(['message' => 'Student not found'], 404);
         }
 
-        $student->update($request->all());
+        $this->studentService->update($student, $request->all());
 
         return response()->json($student, 200);
     }
@@ -60,13 +65,13 @@ class StudentController extends Controller
      */
     public function destroy(string $id)
     {
-        $student = Student::find($id);
+        $student = $this->studentService->find($id);
 
         if (!$student) {
             return response()->json(['message' => 'Student not found'], 404);
         }
 
-        $student->delete();
+        $this->studentService->delete($student);
 
         return response()->json(['message' => 'Student deleted successfully'], 200);
     }
