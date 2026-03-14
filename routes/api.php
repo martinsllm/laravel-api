@@ -1,15 +1,12 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
 Route::prefix('v1')->group(function () {
-    Route::apiResource('student', App\Http\Controllers\StudentController::class);
-    Route::apiResource('course', App\Http\Controllers\CourseController::class);
+    Route::post('login', [App\Http\Controllers\AuthController::class, 'login']);
+    
+    Route::apiResource('student', App\Http\Controllers\StudentController::class)->middleware('auth:sanctum');
+    Route::apiResource('course', App\Http\Controllers\CourseController::class)->middleware('auth:sanctum');
 
-    Route::post('student/courses', [App\Http\Controllers\StudentCourseController::class, 'store']);
+    Route::post('student/courses', [App\Http\Controllers\StudentCourseController::class, 'store'])->middleware('auth:sanctum');
 });
