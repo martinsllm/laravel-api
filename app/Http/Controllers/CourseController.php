@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CourseRequest;
 use App\Services\CourseService;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class CourseController extends Controller
 {
@@ -23,8 +24,12 @@ class CourseController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CourseRequest $request)
+    public function store(CourseRequest $request, Authenticatable $user)
     {
+        if(!$user->can('add')){
+            return response()->json(['message' => 'Forbidden access'], 403);
+        }
+
         $course = $this->courseService->create($request->all());
         return response()->json($course, 200);
     }
@@ -46,8 +51,12 @@ class CourseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(CourseRequest $request, string $id)
+    public function update(CourseRequest $request, string $id, Authenticatable $user)
     {
+        if(!$user->can('edit')){
+            return response()->json(['message' => 'Forbidden access'], 403);
+        }
+
         $course = $this->courseService->find($id);
 
         if (!$course) {
@@ -62,8 +71,12 @@ class CourseController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id, Authenticatable $user)
     {
+        if(!$user->can('delete')){
+            return response()->json(['message' => 'Forbidden access'], 403);
+        }
+        
         $course = $this->courseService->find($id);
 
         if (!$course) {

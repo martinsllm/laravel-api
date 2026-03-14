@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StudentRequest;
 use App\Services\StudentService;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class StudentController extends Controller
 {
@@ -24,8 +25,12 @@ class StudentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StudentRequest $request)
+    public function store(StudentRequest $request, Authenticatable $user)
     {
+        if(!$user->can('add')){
+            return response()->json(['message' => 'Forbidden access'], 403);
+        }
+
         $student = $this->studentService->create($request->all());
         return response()->json($student, 200);
     }
@@ -47,8 +52,12 @@ class StudentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(StudentRequest $request, string $id)
+    public function update(StudentRequest $request, string $id, Authenticatable $user)
     {
+        if(!$user->can('edit')){
+            return response()->json(['message' => 'Forbidden access'], 403);
+        }
+
         $student = $this->studentService->find($id);
 
         if (!$student) {
@@ -63,8 +72,12 @@ class StudentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id, Authenticatable $user)
     {
+        if(!$user->can('delete')){
+            return response()->json(['message' => 'Forbidden access'], 403);
+        }
+
         $student = $this->studentService->find($id);
 
         if (!$student) {
