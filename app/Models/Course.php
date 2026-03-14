@@ -20,6 +20,6 @@ class Course extends Model
 
     public function students()
     {
-        return $this->belongsToMany(Student::class);
+        return $this->belongsToMany(Student::class, 'students_courses', 'course_id', 'student_id');
     }
 }

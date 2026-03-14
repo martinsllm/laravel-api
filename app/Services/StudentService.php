@@ -18,7 +18,7 @@ class StudentService
 
     public function find($id)
     {
-        return $this->student->find($id);
+        return $this->student->with('courses')->find($id);
     }
 
     public function create($data)
