@@ -10,4 +10,6 @@ Route::get('/user', function (Request $request) {
 Route::prefix('v1')->group(function () {
     Route::apiResource('student', App\Http\Controllers\StudentController::class);
     Route::apiResource('course', App\Http\Controllers\CourseController::class);
+
+    Route::post('student/courses', [App\Http\Controllers\StudentCourseController::class, 'store']);
 });
