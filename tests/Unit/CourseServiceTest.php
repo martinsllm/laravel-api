@@ -46,6 +46,15 @@ class CourseServiceTest extends TestCase
         $this->assertEquals('PHP', $result['name']);
     }
 
+    public function testCourseNotFound()
+    {
+        $this->courseService->expects($this->once())->method('find')->willReturn(null);
+
+        $result = $this->courseService->find(1);
+
+        $this->assertNull($result);
+    }
+
     public function testCourseIsCreated()
     {
         $data = [
@@ -91,8 +100,6 @@ class CourseServiceTest extends TestCase
             ->with($course)
             ->willReturn(null);
 
-        $result = $this->courseService->delete($course);
-
-        $this->assertNull($result);
+        $this->assertNull($this->courseService->delete($course));
     }
 }

@@ -48,6 +48,15 @@ class StudentServiceTest extends TestCase
         $this->assertEquals('xG3oH@example.com', $result->email);
     }
 
+    public function testStudentNotFound()
+    {
+        $this->studentService->method('find')->willReturn(null);
+
+        $result = $this->studentService->find(1);
+
+        $this->assertNull($result);
+    }
+
     public function testStudentIsCreated()
     {
         $data = [
@@ -93,7 +102,6 @@ class StudentServiceTest extends TestCase
 
     public function testStudentIsDeleted()
     {
-        // Arrange: estudante para ser excluído
         $student = Mockery::mock(Student::class);
 
         $this->studentService
@@ -101,11 +109,7 @@ class StudentServiceTest extends TestCase
             ->with($student)
             ->willReturn(null);
 
-        // Act: excluir o estudante
-        $result = $this->studentService->delete($student);
-
-        // Assert: verifica se o estudante foi excluído corretamente
-        $this->assertNull($result);
+        $this->assertNull($this->studentService->delete($student));
     }
     
 }
