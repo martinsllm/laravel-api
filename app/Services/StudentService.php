@@ -21,7 +21,7 @@ class StudentService
         return $this->student->with('courses')->find($id);
     }
 
-    public function create($data)
+    public function create(array $data)
     {
         return $this->student->create($data);
     }
