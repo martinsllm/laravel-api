@@ -44,8 +44,8 @@ class StudentServiceTest extends TestCase
         $result = $this->studentService->find(1);
 
         $this->assertInstanceOf(Student::class, $result);
-        $this->assertEquals($data['name'], $result->name);
-        $this->assertEquals($data['email'], $result->email);
+        $this->assertEquals('John Doe', $result->name);
+        $this->assertEquals('xG3oH@example.com', $result->email);
     }
 
     public function testStudentIsCreated()
@@ -63,8 +63,8 @@ class StudentServiceTest extends TestCase
         $result = $this->studentService->create($data);
 
         $this->assertInstanceOf(Student::class, $result);
-        $this->assertEquals($data['name'], $result->name);
-        $this->assertEquals($data['email'], $result->email);
+        $this->assertEquals('John Doe', $result->name);
+        $this->assertEquals('john@example.com', $result->email);
     }
 
     public function testStudentIsUpdated()
