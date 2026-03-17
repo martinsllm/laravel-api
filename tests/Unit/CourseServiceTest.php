@@ -16,7 +16,7 @@ class CourseServiceTest extends TestCase
         $this->courseService = $this->createMock(CourseService::class);
     }
 
-    public function testAllCoursesAreReturned()
+    public function test_all_courses_are_returned()
     {
         $data = [
             ['name' => 'PHP'],
@@ -32,7 +32,7 @@ class CourseServiceTest extends TestCase
         $this->assertCount(2, $result);
     }
 
-    public function testCourseIsFound()
+    public function test_course_is_found()
     {
         $data = [
             'name' => 'PHP'
@@ -46,7 +46,7 @@ class CourseServiceTest extends TestCase
         $this->assertEquals('PHP', $result['name']);
     }
 
-    public function testCourseNotFound()
+    public function test_course_not_found()
     {
         $this->courseService->expects($this->once())->method('find')->willReturn(null);
 
@@ -55,7 +55,7 @@ class CourseServiceTest extends TestCase
         $this->assertNull($result);
     }
 
-    public function testCourseIsCreated()
+    public function test_course_is_created()
     {
         $data = [
             'name' => 'PHP'
@@ -72,7 +72,7 @@ class CourseServiceTest extends TestCase
         $this->assertEquals('PHP', $result['name']);
     }
 
-    public function testCourseIsUpdated()
+    public function test_course_is_updated()
     {
         $existingCourse = new Course([
             'name' => 'PHP'
@@ -91,7 +91,7 @@ class CourseServiceTest extends TestCase
         $this->assertEquals('Laravel', $result['name']);
     }
 
-    public function testCourseIsDeleted()
+    public function test_course_is_deleted()
     {
         $course = Mockery::mock(Course::class);
 

@@ -16,7 +16,7 @@ class StudentServiceTest extends TestCase
         $this->studentService = $this->createMock(StudentService::class);
     }
     
-    public function testAllStudentsAreReturned()
+    public function test_all_students_are_returned()
     {
         $data = [
             ['name' => 'John Doe', 'email' => 'xG3oH@example.com'],
@@ -32,7 +32,7 @@ class StudentServiceTest extends TestCase
         $this->assertCount(2, $result);
     }
 
-    public function testStudentIsFound()
+    public function test_student_is_found()
     {
         $data = [
             'name' => 'John Doe',
@@ -48,7 +48,7 @@ class StudentServiceTest extends TestCase
         $this->assertEquals('xG3oH@example.com', $result->email);
     }
 
-    public function testStudentNotFound()
+    public function test_student_not_found()
     {
         $this->studentService->method('find')->willReturn(null);
 
@@ -57,7 +57,7 @@ class StudentServiceTest extends TestCase
         $this->assertNull($result);
     }
 
-    public function testStudentIsCreated()
+    public function test_student_is_created()
     {
         $data = [
             'name' => 'John Doe',
@@ -76,7 +76,7 @@ class StudentServiceTest extends TestCase
         $this->assertEquals('john@example.com', $result->email);
     }
 
-    public function testStudentIsUpdated()
+    public function test_student_is_updated()
     {
         $existingStudent = new Student([
             'name' => 'John Doe',
@@ -100,7 +100,7 @@ class StudentServiceTest extends TestCase
         $this->assertEquals('new@example.com', $result->email);
     }
 
-    public function testStudentIsDeleted()
+    public function test_student_is_deleted()
     {
         $student = Mockery::mock(Student::class);
 
