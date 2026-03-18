@@ -9,107 +9,96 @@ use PHPUnit\Framework\TestCase;
 
 class StudentServiceTest extends TestCase
 {
-    private $studentService;
+    private $studentMock;
 
     protected function setUp(): void
     {
-        $this->studentService = $this->createMock(StudentService::class);
+        $this->studentMock = Mockery::mock(Student::class);
+    }
+
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        parent::tearDown();
     }
     
     public function test_all_students_are_returned()
     {
-        $data = [
+        $data = collect([
             ['name' => 'John Doe', 'email' => 'xG3oH@example.com'],
             ['name' => 'Jane Doe', 'email' => 'xG3oH@example.com']
-        ];
+        ]);
 
-        $this->studentService->method('list')->willReturn($data);
+        $this->studentMock->shouldReceive('all')
+            ->once()
+            ->andReturn($data);
 
-        $result = $this->studentService->list();
+        $service = new StudentService($this->studentMock);
+        $result = $service->list();
 
-        $this->assertEquals('John Doe', $result[0]['name']);
-        $this->assertEquals('Jane Doe', $result[1]['name']);
-        $this->assertCount(2, $result);
+        $this->assertEquals($data, $result);
     }
 
     public function test_student_is_found()
     {
-        $data = [
-            'name' => 'John Doe',
-            'email' => 'xG3oH@example.com'
-        ];
+        $mockStudent = (object) ['id' => 1, 'name' => 'John Doe', 'email' => 'xG3oH@example.com'];
 
-        $this->studentService->method('find')->willReturn(new Student($data));
+        $this->studentMock->shouldReceive('with')->once()->with('courses')->andReturnSelf();
+        $this->studentMock->shouldReceive('find')->once()->with(1)->andReturn($mockStudent);
 
-        $result = $this->studentService->find(1);
+        $service = new StudentService($this->studentMock);
+        $result = $service->find(1);
 
-        $this->assertInstanceOf(Student::class, $result);
-        $this->assertEquals('John Doe', $result->name);
-        $this->assertEquals('xG3oH@example.com', $result->email);
+        $this->assertEquals($mockStudent, $result);
     }
 
     public function test_student_not_found()
     {
-        $this->studentService->method('find')->willReturn(null);
+        $this->studentMock->shouldReceive('with')->once()->with('courses')->andReturnSelf();
+        $this->studentMock->shouldReceive('find')->once()->with(1)->andReturn(null);
 
-        $result = $this->studentService->find(1);
+        $service = new StudentService($this->studentMock);
+        $result = $service->find(1);
 
         $this->assertNull($result);
     }
 
     public function test_student_is_created()
     {
-        $data = [
-            'name' => 'John Doe',
-            'email' => 'john@example.com'
-        ];
+        $data = ['name' => 'John Doe', 'email' => 'john@example.com'];
+        $mockStudent = (object) ['id' => 1, 'name' => 'John Doe', 'email' => 'john@example.com'];
 
-        $this->studentService
-            ->method('create')
-            ->with($data)
-            ->willReturn(new Student($data));
+        $this->studentMock->shouldReceive('create')->once()->with($data)->andReturn($mockStudent);
 
-        $result = $this->studentService->create($data);
+        $service = new StudentService($this->studentMock);
+        $result = $service->create($data);
 
-        $this->assertInstanceOf(Student::class, $result);
-        $this->assertEquals('John Doe', $result->name);
-        $this->assertEquals('john@example.com', $result->email);
+        $this->assertEquals($mockStudent, $result);
     }
 
     public function test_student_is_updated()
     {
-        $existingStudent = new Student([
-            'name' => 'John Doe',
-            'email' => 'old@example.com'
-        ]);
-
+        $existingStudent = Mockery::mock(Student::class);
         $updateData = ['email' => 'new@example.com'];
 
-        $this->studentService->expects($this->once())
-            ->method('update')
-            ->with($existingStudent, $updateData)
-            ->willReturn(new Student([
-                'name' => 'John Doe',
-                'email' => 'new@example.com'
-            ]));
+        $existingStudent->shouldReceive('fill')->once()->with($updateData);
+        $existingStudent->shouldReceive('save')->once();
 
-        $result = $this->studentService->update($existingStudent, $updateData);
+        $service = new StudentService($this->studentMock);
+        $result = $service->update($existingStudent, $updateData);
 
-        // Assert: verifica se o estudante foi atualizado corretamente
-        $this->assertInstanceOf(Student::class, $result);
-        $this->assertEquals('new@example.com', $result->email);
+        $this->assertEquals($existingStudent, $result);
     }
 
     public function test_student_is_deleted()
     {
         $student = Mockery::mock(Student::class);
+        $student->shouldReceive('delete')->once();
 
-        $this->studentService
-            ->method('delete')
-            ->with($student)
-            ->willReturn(null);
+        $service = new StudentService($this->studentMock);
+        $service->delete($student);
 
-        $this->assertNull($this->studentService->delete($student));
+        $this->assertTrue(true); // Só garante que delete foi chamado
     }
     
 }

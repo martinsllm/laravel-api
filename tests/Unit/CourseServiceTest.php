@@ -9,97 +9,88 @@ use Tests\TestCase;
 
 class CourseServiceTest extends TestCase
 {
-    private $courseService;
+    private $courseMock;
 
     protected function setUp(): void
     {
-        $this->courseService = $this->createMock(CourseService::class);
+        // Mock do model Course
+        $this->courseMock = Mockery::mock(Course::class);
     }
 
     public function test_all_courses_are_returned()
     {
-        $data = [
+        $data = collect([
             ['name' => 'PHP'],
             ['name' => 'Laravel']
-        ];
-
-        $this->courseService->expects($this->once())->method('list')->willReturn($data);
-        
-        $result = $this->courseService->list();
-
-        $this->assertEquals('PHP', $result[0]['name']);
-        $this->assertEquals('Laravel', $result[1]['name']);
-        $this->assertCount(2, $result);
-    }
-
-    public function test_course_is_found()
-    {
-        $data = [
-            'name' => 'PHP'
-        ];   
-
-        $this->courseService->expects($this->once())->method('find')->willReturn(new Course($data));
-
-        $result = $this->courseService->find(1);
-
-        $this->assertInstanceOf(Course::class, $result);
-        $this->assertEquals('PHP', $result['name']);
-    }
-
-    public function test_course_not_found()
-    {
-        $this->courseService->expects($this->once())->method('find')->willReturn(null);
-
-        $result = $this->courseService->find(1);
-
-        $this->assertNull($result);
-    }
-
-    public function test_course_is_created()
-    {
-        $data = [
-            'name' => 'PHP'
-        ];
-
-        $this->courseService->expects($this->once())
-            ->method('create')
-            ->with($data)
-            ->willReturn(new Course($data));
-
-        $result = $this->courseService->create($data);
-
-        $this->assertInstanceOf(Course::class, $result);
-        $this->assertEquals('PHP', $result['name']);
-    }
-
-    public function test_course_is_updated()
-    {
-        $existingCourse = new Course([
-            'name' => 'PHP'
         ]);
 
-        $updateData = ['name' => 'Laravel'];
+        $this->courseMock->shouldReceive('all')->once()->andReturn($data);
 
-        $this->courseService->expects($this->once())
-            ->method('update')
-            ->with($existingCourse, $updateData)
-            ->willReturn(new Course($updateData));
+        $service = new CourseService($this->courseMock);
+        $result = $service->list();
 
-        $result = $this->courseService->update($existingCourse, $updateData);
-
-        $this->assertInstanceOf(Course::class, $result);
-        $this->assertEquals('Laravel', $result['name']);
+        $this->assertEquals($data, $result);
     }
 
-    public function test_course_is_deleted()
+    public function test_find_course_by_id()
+    {
+        $courseId = 1;
+        $mockCourse = (object) ['id' => $courseId, 'name' => 'PHP'];
+
+        $this->courseMock->shouldReceive('with')
+            ->once()
+            ->with('students')
+            ->andReturnSelf(); // Encadeamento do Eloquent
+
+        $this->courseMock->shouldReceive('find')
+            ->once()
+            ->with($courseId)
+            ->andReturn($mockCourse);
+
+        $service = new CourseService($this->courseMock);
+        $result = $service->find($courseId);
+
+        $this->assertEquals($mockCourse, $result);
+    }
+
+   public function test_create_course()
+    {
+        $data = ['name' => 'VueJS'];
+        $mockCourse = (object) ['id' => 10, 'name' => 'VueJS'];
+
+        $this->courseMock->shouldReceive('create')
+            ->once()
+            ->with($data)
+            ->andReturn($mockCourse);
+
+        $service = new CourseService($this->courseMock);
+        $result = $service->create($data);
+
+        $this->assertEquals($mockCourse, $result);
+    }
+
+    public function test_update_course()
+    {
+        $existingCourse = Mockery::mock(Course::class);
+        $updateData = ['name' => 'Updated PHP'];
+
+        $existingCourse->shouldReceive('fill')->once()->with($updateData);
+        $existingCourse->shouldReceive('save')->once();
+
+        $service = new CourseService($this->courseMock);
+        $result = $service->update($existingCourse, $updateData);
+
+        $this->assertEquals($existingCourse, $result);
+    }
+
+    public function test_delete_course()
     {
         $course = Mockery::mock(Course::class);
+        $course->shouldReceive('delete')->once();
 
-        $this->courseService
-            ->method('delete')
-            ->with($course)
-            ->willReturn(null);
+        $service = new CourseService($this->courseMock);
+        $service->delete($course);
 
-        $this->assertNull($this->courseService->delete($course));
+        $this->assertTrue(true);
     }
 }
