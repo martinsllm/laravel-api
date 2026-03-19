@@ -23,13 +23,13 @@ A relação entre estudantes e cursos é **many-to-many**.
 Clone o repositório:
 
 ```bash
-git clone https://github.com/seu-usuario/seu-repositorio.git
+git clone https://github.com/martinsllm/laravel-api.git
 ````
 
 Entre na pasta do projeto:
 
 ```bash
-cd seu-repositorio
+cd laravel-api
 ```
 
 Instale as dependências:
