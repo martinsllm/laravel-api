@@ -18,6 +18,14 @@ class AuthController extends Controller
         return response()->json(['message' => 'Unauthorized'], 401);
     }
 
+    public function refresh()
+    {
+        $user = Auth::user();
+        $user->tokens()->delete();
+        $newToken = $user->createToken('auth_token')->plainTextToken;
+        return response()->json(['token' => $newToken], 200);
+    }
+
     public function logout()
     {
         Auth::user()->tokens()->delete();
