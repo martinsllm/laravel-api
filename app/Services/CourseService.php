@@ -3,12 +3,13 @@
 namespace App\Services;
 
 use App\Models\Course;
+use App\Contracts\BaseRepository;
 
-class CourseService
+class CourseService extends BaseRepository
 {
     public function __construct(public Course $course)
     {
-        $this->course = $course;
+        parent::__construct($course);
     }
 
     public function list()
@@ -21,20 +22,5 @@ class CourseService
         return $this->course->with('students')->find($id);
     }
 
-    public function create($data)
-    {
-        return $this->course->create($data);
-    }
 
-    public function update(Course $course, array $data)
-    {
-        $course->fill($data);
-        $course->save();
-        return $course;
-    }
-
-    public function delete(Course $course)
-    {
-        $course->delete();
-    }
 }

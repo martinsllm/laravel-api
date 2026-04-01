@@ -31,7 +31,7 @@ class StudentController extends Controller
             return response()->json(['message' => 'Forbidden access'], 403);
         }
 
-        $student = $this->studentService->create($request->all());
+        $student = $this->studentService->save($request->all());
         return response()->json($student, 200);
     }
 

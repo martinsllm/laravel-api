@@ -3,12 +3,13 @@
 namespace App\Services;
 
 use App\Models\Student;
+use App\Contracts\BaseRepository;   
 
-class StudentService
+class StudentService extends BaseRepository
 {
     public function __construct(public Student $student)
     {
-        $this->student = $student;
+        parent::__construct($student);
     }
 
     public function list()  
@@ -19,22 +20,5 @@ class StudentService
     public function find($id)
     {
         return $this->student->with('courses')->find($id);
-    }
-
-    public function create(array $data)
-    {
-        return $this->student->create($data);
-    }
-
-    public function update(Student $student, array $data)
-    {
-        $student->fill($data);
-        $student->save();
-        return $student;
-    }
-
-    public function delete(Student $student)
-    {
-        $student->delete();
     }
 }

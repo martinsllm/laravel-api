@@ -30,7 +30,7 @@ class CourseController extends Controller
             return response()->json(['message' => 'Forbidden access'], 403);
         }
 
-        $course = $this->courseService->create($request->all());
+        $course = $this->courseService->save($request->all());
         return response()->json($course, 200);
     }
 
