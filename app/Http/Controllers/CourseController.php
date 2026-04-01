@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CourseRequest;
 use App\Services\CourseService;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
@@ -15,10 +16,13 @@ class CourseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $courses = $this->courseService->list();
-        return response()->json($courses, 200);
+        $query = $this->courseService->list($request);
+
+        $result = $query->paginate(10);
+        
+        return response()->json($result, 200);
     }
 
     /**

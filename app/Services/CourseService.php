@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Course;
 use App\Contracts\BaseRepository;
+use Illuminate\Database\Eloquent\Builder;
 
 class CourseService extends BaseRepository
 {
@@ -12,9 +13,15 @@ class CourseService extends BaseRepository
         parent::__construct($course);
     }
 
-    public function list()
+    public function list($request): Builder
     {
-        return $this->course->all();
+        $query = $this->course->query();
+
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->get('name') . '%');
+        }
+
+        return $query;
     }
 
     public function find($id)
