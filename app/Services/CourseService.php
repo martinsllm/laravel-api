@@ -4,10 +4,13 @@ namespace App\Services;
 
 use App\Models\Course;
 use App\Contracts\BaseRepository;
+use App\Traits\FilterTrait;
 use Illuminate\Database\Eloquent\Builder;
 
 class CourseService extends BaseRepository
 {
+    use FilterTrait;
+
     public function __construct(public Course $course)
     {
         parent::__construct($course);
@@ -18,7 +21,7 @@ class CourseService extends BaseRepository
         $query = $this->course->query();
 
         if ($request->has('name')) {
-            $query->where('name', 'like', '%' . $request->get('name') . '%');
+            $this->filter($query, $request->query());
         }
 
         return $query;
