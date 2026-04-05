@@ -44,7 +44,7 @@ class StudentController extends Controller
      */
     public function show(string $id)
     {
-        $student = $this->studentService->find($id);
+        $student = $this->studentService->find($id, true);
 
         if (!$student) {
             return response()->json(['message' => 'Student not found'], 404);

@@ -27,9 +27,15 @@ class CourseService extends BaseRepository
         return $query;
     }
 
-    public function find($id)
+    public function find($id, $withStudents = false)
     {
-        return $this->course->with('students')->find($id);
+        $query = $this->course->query();
+
+        if ($withStudents) {
+            $query->with('students');
+        }
+
+        return $query->find($id);
     }
 
 

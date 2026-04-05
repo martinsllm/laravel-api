@@ -43,7 +43,7 @@ class CourseController extends Controller
      */
     public function show(string $id)
     {
-        $course = $this->courseService->find($id);
+        $course = $this->courseService->find($id, true);
 
         if (!$course) {
             return response()->json(['message' => 'Course not found'], 404);

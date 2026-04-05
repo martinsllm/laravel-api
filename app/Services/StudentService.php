@@ -26,8 +26,14 @@ class StudentService extends BaseRepository
         return $query;
     }
 
-    public function find($id)
+    public function find($id, $withCourses = false)
     {
-        return $this->student->with('courses')->find($id);
+        $query = $this->student->query();
+
+        if ($withCourses) {
+            $query->with('courses');
+        }
+
+        return $query->find($id);
     }
 }
