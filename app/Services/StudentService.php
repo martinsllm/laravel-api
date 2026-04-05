@@ -12,9 +12,15 @@ class StudentService extends BaseRepository
         parent::__construct($student);
     }
 
-    public function list()  
+    public function list($request)  
     {
-        return $this->student->all();
+        $query = $this->student->query();
+
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->get('name') . '%');
+        }
+
+        return $query;
     }
 
     public function find($id)

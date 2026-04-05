@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StudentRequest;
 use App\Services\StudentService;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Http\Request;
 
 class StudentController extends Controller
 {
@@ -16,10 +17,13 @@ class StudentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $students = $this->studentService->list();
-        return response()->json($students, 200);
+        $students = $this->studentService->list($request);
+
+        $result = $students->paginate(10);
+
+        return response()->json($result, 200);
     }
 
     /**
