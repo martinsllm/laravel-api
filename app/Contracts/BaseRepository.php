@@ -13,9 +13,10 @@ class BaseRepository implements BaseRepositoryInterface
 
     public function save(array $data): Model
     {
-        $this->model->fill($data);
-        $this->model->save();
-        return $this->model;
+        $newModel = new ($this->model::class)();
+        $newModel->fill($data);
+        $newModel->save();
+        return $newModel;
     }
 
     public function update(Model $model, array $data): Model
